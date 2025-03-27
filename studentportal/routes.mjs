@@ -16,16 +16,19 @@ router.get('/', (req, res) => {
 
 //studentSignup
 router.post('/api/studentSignup', (req, res) => {
-  const collection = db.collection('students');
+  const studentsCollection = db.collection('students');
+  const classesCollection = db.collection('classes');
   const hashedPassword = bcrypt.hashSync(req.body.password, 10);
-  collection
+
+  studentsCollection
     .findOne({ email: req.body.email })
     .then((existingUser) => {
       if (existingUser) {
         return res.status(400).json({ message: 'User already exists' });
       }
 
-      collection
+      // Step 1: Insert the new student
+      studentsCollection
         .insertOne({
           name: req.body.name,
           email: req.body.email,
@@ -34,31 +37,52 @@ router.post('/api/studentSignup', (req, res) => {
           role: 'student',
         })
         .then((result) => {
-          const token = jwt.sign(
-            {
-              userId: result.insertedId,
-              role: 'student',
-              name: req.body.name,
-              email: req.body.email,
-              classCode: req.body.classCode,
-              iss: 'http://localhost:3000',
-            },
-            JWT_SECRET,
-            { expiresIn: '1h' }
-          );
-          const response = {
-            status: 200,
-            userId: result.insertedId,
-            message: 'Signup successful',
-            ClassCode: req.body.classCode,
-            token: token,
-          };
-          console.log(`User${req.body.name} Added`, response);
-          res.json(response);
+          const studentId = result.insertedId;
+
+          // Step 2: Update the class to add this student's ID
+          classesCollection
+            .updateOne(
+              { classCode: req.body.classCode },
+              { $push: { students: studentId } }
+            )
+            .then(() => {
+              // Step 3: Generate a token and respond
+              const token = jwt.sign(
+                {
+                  userId: studentId,
+                  role: 'student',
+                  name: req.body.name,
+                  email: req.body.email,
+                  classCode: req.body.classCode,
+                  iss: 'http://localhost:3000',
+                },
+                JWT_SECRET,
+                { expiresIn: '1h' }
+              );
+
+              const response = {
+                status: 200,
+                userId: studentId,
+                message: 'Signup successful',
+                classCode: req.body.classCode,
+                token: token,
+              };
+
+              console.log(`User ${req.body.name} added`, response);
+              res.json(response);
+            })
+            .catch((error) => {
+              console.error('Error updating class:', error);
+              res.status(500).json({ message: 'Failed to update class' });
+            });
+        })
+        .catch((error) => {
+          console.error('Error inserting student:', error);
+          res.status(500).json({ message: 'Failed to insert student' });
         });
     })
     .catch((error) => {
-      console.log(error);
+      console.error('Error finding existing user:', error);
       res.status(500).json({ message: 'Internal server error' });
     });
 });
