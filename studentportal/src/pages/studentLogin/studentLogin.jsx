@@ -38,7 +38,7 @@ const TeacherLogin = () => {
         <Navbar />
         <div className='loginContainer'>
           <div className='loginCard'>
-            <h2>Login To Your Student Account </h2>
+            <h2>Log into Your Student Account </h2>
             <form className='loginForm' onSubmit={(e) => submitHandle(e)}>
               <input
                 type='email'
@@ -61,7 +61,7 @@ const TeacherLogin = () => {
             </p>
 
             <p>
-              <a href='/signup'>Create Account </a> if you don't have one{' '}
+              Don't have an account ? <a href='/signup'> Create account </a>
             </p>
           </div>
         </div>
