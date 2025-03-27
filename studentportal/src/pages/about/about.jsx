@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import '../teacherLogin/studentLogin.css';
+import '../studentLogin/studentLogin.css';
 
 const About = () => {
   return (

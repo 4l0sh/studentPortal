@@ -1,23 +1,12 @@
 import { Fragment } from 'react';
-import { useNavigate } from 'react-router-dom';
+import Navbar from '../../components/navbar';
 import './studentLogin.css';
 
 const TeacherLogin = () => {
-  const navigate = useNavigate();
   return (
     <Fragment>
       <div className='mainContainer'>
-        <div className='navBar'>
-          <div className='navBarTitle'>
-            <h2>Student Portal</h2>
-          </div>
-          <div className='navBarLinks'>
-            <a href='#'>Login as a Teacher</a>
-            <a href='#'>Home</a>
-            <a href='/about'>About</a>
-            <a href='#'>Contact</a>
-          </div>
-        </div>
+        <Navbar />
         <div className='loginContainer'>
           <div className='loginCard'>
             <h2>Login To Your Student Account </h2>
@@ -35,7 +24,7 @@ const TeacherLogin = () => {
             </p>
 
             <p>
-              <a href='#'>Create Account </a> if you don't have one{' '}
+              <a href='/signup'>Create Account </a> if you don't have one{' '}
             </p>
           </div>
         </div>

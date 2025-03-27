@@ -166,3 +166,8 @@ hr {
   color: #555;
   line-height: 1.6;
 }
+.error {
+  color: red;
+  font-size: 1rem;
+  margin-top: 10px;
+}
