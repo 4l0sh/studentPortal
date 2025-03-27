@@ -1,5 +1,6 @@
 import { Fragment, useState } from 'react';
 import Navbar from '../../components/navbar';
+import M from 'materialize-css';
 const StudentSignup = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -13,12 +14,27 @@ const StudentSignup = () => {
       setErrorMessage('Passwords do not match');
       return;
     }
-    const student = {
-      name: name,
-      email: email,
-      password: password,
-    };
-    console.log(student);
+    if (!name || !email || !password || !confirmPassword) {
+      setErrorMessage('Please fill all the fields');
+      return;
+    }
+    fetch('http://localhost:3000/api/studentSignup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, email, password }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.message === 'User already exists') {
+          setErrorMessage('User already exists, Please login instead');
+        } else {
+          M.toast({ html: 'Signup Succesfull', classes: 'green' });
+          sessionStorage.setItem('token', data.token);
+          window.location.href = '/home';
+        }
+      });
   };
 
   return (
