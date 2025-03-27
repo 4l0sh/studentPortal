@@ -30,6 +30,7 @@ router.post('/api/studentSignup', (req, res) => {
           name: req.body.name,
           email: req.body.email,
           password: hashedPassword,
+          classCode: req.body.classCode,
           role: 'student',
         })
         .then((result) => {
@@ -39,6 +40,7 @@ router.post('/api/studentSignup', (req, res) => {
               role: 'student',
               name: req.body.name,
               email: req.body.email,
+              classCode: req.body.classCode,
               iss: 'http://localhost:3000',
             },
             JWT_SECRET,
@@ -48,6 +50,7 @@ router.post('/api/studentSignup', (req, res) => {
             status: 200,
             userId: result.insertedId,
             message: 'Signup successful',
+            ClassCode: req.body.classCode,
             token: token,
           };
           console.log(`User${req.body.name} Added`, response);

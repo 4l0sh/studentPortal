@@ -1,8 +1,10 @@
 import { Fragment, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/navbar';
 import M from 'materialize-css';
 
 const TeacherSignup = () => {
+  const navigate = useNavigate();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,26 +23,28 @@ const TeacherSignup = () => {
       setErrorMessage('Invalid secret code');
       return;
     }
-    fetch('http://localhost:3000/api/teacherSignup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name, email, password }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.message === 'User already exists') {
-          setErrorMessage('User already exists, Please login instead');
-        } else {
-          M.toast({ html: 'Signup Succesfull', classes: 'green' });
-          sessionStorage.setItem('token', data.token);
-          window.location.href = '/home';
-        }
+    if (code === secretCode) {
+      fetch('http://localhost:3000/api/teacherSignup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password }),
       })
-      .catch((error) => {
-        console.log('Error signing up ', error);
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.message === 'User already exists') {
+            setErrorMessage('User already exists, Please login instead');
+          } else {
+            M.toast({ html: 'Signup Succesfull', classes: 'green' });
+            sessionStorage.setItem('token', data.token);
+            navigate('/home');
+          }
+        })
+        .catch((error) => {
+          console.log('Error signing up ', error);
+        });
+    }
   };
 
   return (

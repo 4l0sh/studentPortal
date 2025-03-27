@@ -1,10 +1,14 @@
 import { Fragment, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/navbar';
+import M from 'materialize-css';
 import './studentLogin.css';
 
 const TeacherLogin = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const submitHandle = (e) => {
     e.preventDefault();
@@ -22,13 +26,13 @@ const TeacherLogin = () => {
       .then((response) => response.json())
       .then((data) => {
         if (data.message === 'User does not exist') {
-          alert('User does not exist, Please signup instead');
+          setErrorMessage('User does not exist, Please signup instead');
         } else if (data.message === 'Incorrect Password') {
-          alert('Incorrect Password');
+          setErrorMessage('Incorrect Password');
         } else {
-          alert('Login Succesfull');
+          M.toast({ html: 'Login Succesfull', classes: 'green' });
           sessionStorage.setItem('token', data.token);
-          window.location.href = '/home';
+          navigate('/home');
         }
       });
   };
@@ -39,6 +43,7 @@ const TeacherLogin = () => {
         <div className='loginContainer'>
           <div className='loginCard'>
             <h2>Log into Your Student Account </h2>
+            {errorMessage && <p className='error'>{errorMessage}</p>}
             <form className='loginForm' onSubmit={(e) => submitHandle(e)}>
               <input
                 type='email'
