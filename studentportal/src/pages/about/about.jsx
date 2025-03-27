@@ -10,7 +10,7 @@ const About = () => {
             <h2>Student Portal</h2>
           </div>
           <div className='navBarLinks'>
-            <a href='#'>Login as a Teacher</a>
+            <a href='/teacherLogin'>Login as a Teacher</a>
             <a href='/'>Login as a Student</a>
             <a href='/about'>About</a>
             <a href='#'>Contact</a>
