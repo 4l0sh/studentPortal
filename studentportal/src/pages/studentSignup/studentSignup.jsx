@@ -17,7 +17,7 @@ const StudentSignup = () => {
       setErrorMessage('Passwords do not match');
       return;
     }
-    if (!name || !email || !password || !confirmPassword || !classCode) {
+    if (!name || !email || !password || !confirmPassword) {
       setErrorMessage('Please fill all the fields');
       return;
     }

@@ -14,6 +14,23 @@ router.get('/', (req, res) => {
   res.send('Hello World');
 });
 
+//middleware to check token
+function checkToken(req, res, next) {
+  const token = req.get('token');
+  if (!token) {
+    return res.status(403).json({ message: 'No token found' });
+  }
+  jwt.verify(token, JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: 'Invalid token' });
+    }
+    if (decoded.role !== 'teacher') {
+      return res.status(403).json({ message: 'You are not authorized' });
+    }
+    next();
+  });
+}
+
 //studentSignup
 router.post('/api/studentSignup', (req, res) => {
   const studentsCollection = db.collection('students');
@@ -27,33 +44,30 @@ router.post('/api/studentSignup', (req, res) => {
         return res.status(400).json({ message: 'User already exists' });
       }
 
-      // Step 1: Insert the new student
       studentsCollection
         .insertOne({
           name: req.body.name,
           email: req.body.email,
           password: hashedPassword,
-          classCode: req.body.classCode,
+          classes: [req.body.classCode],
           role: 'student',
         })
         .then((result) => {
           const studentId = result.insertedId;
 
-          // Step 2: Update the class to add this student's ID
           classesCollection
             .updateOne(
               { classCode: req.body.classCode },
               { $push: { students: studentId } }
             )
             .then(() => {
-              // Step 3: Generate a token and respond
               const token = jwt.sign(
                 {
                   userId: studentId,
                   role: 'student',
                   name: req.body.name,
                   email: req.body.email,
-                  classCode: req.body.classCode,
+                  classes: [req.body.classCode],
                   iss: 'http://localhost:3000',
                 },
                 JWT_SECRET,
@@ -64,7 +78,7 @@ router.post('/api/studentSignup', (req, res) => {
                 status: 200,
                 userId: studentId,
                 message: 'Signup successful',
-                classCode: req.body.classCode,
+                classes: [req.body.classCode],
                 token: token,
               };
 
@@ -210,6 +224,7 @@ router.post('/api/teacherLogin', (req, res) => {
           status: 200,
           name: result.name,
           message: 'Login successful',
+          teacherId: result._id,
           token: token,
         };
         return res.json(response);
@@ -221,6 +236,28 @@ router.post('/api/teacherLogin', (req, res) => {
     });
 });
 
+//get assignments
+router.get('/api/assignments', checkToken, (req, res) => {
+  const collection = db.collection('assignments');
+  const teacherId = req.get('teacherId');
+  if (!teacherId) {
+    return res.status(400).json({
+      message: 'No id found, please check if you are logged in',
+    });
+  }
+  collection
+    .find({ teacherId: teacherId })
+    .toArray()
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({ message: 'Internal server error' });
+    });
+});
+
+//test route
 router.get('/api/data', (req, res) => {
   res.send('Data');
 });

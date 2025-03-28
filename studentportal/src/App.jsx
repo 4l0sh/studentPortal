@@ -4,6 +4,7 @@ import StudentLogin from './pages/studentLogin/studentLogin';
 import StudentSignup from './pages/studentSignup/studentSignup';
 import TeacherSignup from './pages/teacherSignup/teacherSignup';
 import TeacherLogin from './pages/teacherLogin/teacherLogin';
+import TeacherHome from './pages/teacherHome/teacherHome';
 import About from './pages/about/about';
 import './App.css';
 
@@ -17,6 +18,7 @@ function App() {
           <Route path='/teacherSignup' element={<TeacherSignup />} />
           <Route path='/teacherLogin' element={<TeacherLogin />} />
           <Route path='/about' element={<About />} />
+          <Route path='/teacher/home' element={<TeacherHome />} />
         </Routes>
       </Router>
     </Fragment>

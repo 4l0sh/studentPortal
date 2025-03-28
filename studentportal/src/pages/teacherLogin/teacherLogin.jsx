@@ -30,8 +30,9 @@ const TeacherLogin = () => {
           setErrorMessage('Incorrect Password');
         } else {
           sessionStorage.setItem('token', data.token);
+          sessionStorage.setItem('teacherId', data.teacherId);
           M.toast({ html: 'Login Succesfull', classes: 'green' });
-          navigate('/home');
+          navigate('/teacher/home');
         }
       })
       .catch((err) => {
