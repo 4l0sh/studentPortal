@@ -6,8 +6,19 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
 const router = express.Router();
-const upload = multer({ dest: 'uploads/' });
 const JWT_SECRET = process.env.VITE_JWT_SECRET;
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix =
+      Date.now() + '-' + Math.round(Math.random() * 1e9) + '-';
+    cb(null, uniqueSuffix + file.originalname);
+  },
+});
+const upload = multer({ storage: storage });
 
 //Routes
 router.get('/', (req, res) => {
@@ -59,7 +70,7 @@ router.post('/api/studentSignup', async (req, res) => {
     // Ensure student is not added twice
     await classesCollection.updateOne(
       { classCode: req.body.classCode },
-      { $addToSet: { students: studentId } } // $addToSet prevents duplicates
+      { $addToSet: { students: studentId } }
     );
 
     const token = jwt.sign(
@@ -241,36 +252,47 @@ router.get('/api/assignments', checkToken, (req, res) => {
 });
 
 //add assignment
-router.post('/api/addAssignment', checkToken, (req, res) => {
-  ///get teacgerID from token
-  const token = req.get('token');
-  const decoded = jwt.verify(token, JWT_SECRET);
-  const teacherId = decoded.userId;
-  const classCode = req.body.classCode;
-  //add assignment to database
-  const collection = db.collection('assignments');
-  collection
-    .insertOne({
-      teacherId: teacherId,
-      classCode: classCode,
-      assignmentName: req.body.assignmentName,
-      dueDate: req.body.dueDate,
-      addDate: req.body.addDate,
-      status: 'open',
-      submissions: [],
-    })
-    .then((result) => {
-      res.json({
-        status: 200,
-        message: 'Assignment added successfully',
-        assignmentId: result.insertedId,
+router.post(
+  '/api/addAssignment',
+  checkToken,
+  upload.single('assignmentFile'),
+  (req, res) => {
+    // Handle the file upload
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const token = req.get('token');
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const teacherId = decoded.userId;
+    const classCode = req.body.classCode;
+    const filePath = req.file.path;
+
+    const collection = db.collection('assignments');
+    collection
+      .insertOne({
+        teacherId: teacherId,
+        classCode: classCode,
+        assignmentName: req.body.assignmentName,
+        dueDate: req.body.dueDate,
+        addDate: req.body.addDate,
+        filePath: filePath,
+        status: 'open',
+        submissions: [],
+      })
+      .then((result) => {
+        res.json({
+          status: 200,
+          message: 'Assignment added successfully',
+          assignmentId: result.insertedId,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500).json({ message: 'Internal server error' });
       });
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(500).json({ message: 'Internal server error' });
-    });
-});
+  }
+);
 
 //create class
 router.post('/api/createClass', checkToken, (req, res) => {

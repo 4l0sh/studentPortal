@@ -19,10 +19,11 @@ const CreateClass = () => {
         if (response.status === 200) {
           response.json().then((data) => {
             console.log(data);
+            sessionStorage.setItem('classCode', classCode);
             window.location.href = '/teacher/home';
           });
         } else if (response.status === 400) {
-          setErrorMessage('Class already exists');
+          setErrorMessage('Class Code already exists');
         } else {
           setErrorMessage('Something went wrong');
         }

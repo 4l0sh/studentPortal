@@ -32,19 +32,20 @@ const TeacherHome = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(assignmentName, dueDate);
-    console.log(addDate);
+    const formData = new FormData();
+    formData.append('assignmentName', assignmentName);
+    formData.append('dueDate', dueDate);
+    formData.append('addDate', addDate);
+    formData.append('classCode', sessionStorage.getItem('classCode'));
+    const fileInput = document.querySelector('input[type="file"]');
+    formData.append('assignmentFile', fileInput.files[0]);
+
     fetch('http://localhost:3000/api/addAssignment', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         token: sessionStorage.getItem('token'),
       },
-      body: JSON.stringify({
-        assignmentName,
-        dueDate,
-        addDate,
-      }),
+      body: formData,
     }).then((response) => {
       if (response.status === 200) {
         response.json().then((data) => {
@@ -55,8 +56,6 @@ const TeacherHome = () => {
           M.toast({ html: 'Assignment Added', classes: 'green' });
           window.location.reload();
         });
-      } else if (response.status === 400) {
-        M.toast({ html: 'Assignment already exists', classes: 'red' });
       } else {
         M.toast({ html: 'Something went wrong', classes: 'red' });
       }
@@ -90,6 +89,7 @@ const TeacherHome = () => {
             <form
               className='addAssignmentForm'
               onSubmit={(e) => handleSubmit(e)}
+              encType='multipart/form-data'
             >
               <input
                 type='text'
@@ -102,6 +102,8 @@ const TeacherHome = () => {
                 placeholder='Select due date'
                 onChange={(e) => setDueDate(e.target.value)}
               />
+              <label htmlFor='description'>Select a description file</label>
+              <input type='file' name='assignmentFile' />
               <button className='addAssignmentButton'>Add Assignment</button>
               <button
                 className='closeButton'
@@ -122,6 +124,19 @@ const TeacherHome = () => {
                   <strong>Due: </strong>
                   {assignment.dueDate}
                 </p>
+                <p>
+                  <strong>Added: </strong>
+                  {assignment.addDate}
+                </p>
+                {assignment.filePath && (
+                  <a
+                    href={`http://localhost:3000/${assignment.filePath}`}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                  >
+                    View Description File
+                  </a>
+                )}
               </div>
             );
           })}
