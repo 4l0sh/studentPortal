@@ -7,6 +7,7 @@ import TeacherLogin from './pages/teacherLogin/teacherLogin';
 import TeacherHome from './pages/teacherHome/teacherHome';
 import CreateClass from './pages/createClass/createClass';
 import About from './pages/about/about';
+import Contact from './pages/contact/contact';
 import './App.css';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
           <Route path='/about' element={<About />} />
           <Route path='/teacher/home' element={<TeacherHome />} />
           <Route path='/createClass' element={<CreateClass />} />
+          <Route path='/contact' element={<Contact />} />
         </Routes>
       </Router>
     </Fragment>

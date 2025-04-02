@@ -8,12 +8,24 @@ dotenv.config();
 const app = express();
 const port = process.env.VITE_PORT || 3000;
 
-//middleware
+// Serve static files from the 'uploads' folder
+app.use(
+  '/uploads',
+  express.static('uploads', {
+    setHeaders: (res, path) => {
+      if (path.endsWith('.pdf')) {
+        res.setHeader('Content-Type', 'application/pdf');
+      }
+    },
+  })
+);
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 app.use('/', routes);
 
-//mongodb connection
+// MongoDB connection
 const mongoUri = process.env.VITE_MONGO_URI;
 let db;
 
