@@ -1,0 +1,38 @@
+.createClassContainer {
+  display: flex;
+  height: 100%;
+  box-sizing: border-box;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.classForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.classForm input {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: border-color 0.3s ease;
+}
+.classForm input:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+.classForm button {
+  padding: 10px;
+  font-size: 1rem;
+  color: white;
+  background-color: #4a90e2;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.classForm button:hover {
+  background-color: #357ab8;
+}

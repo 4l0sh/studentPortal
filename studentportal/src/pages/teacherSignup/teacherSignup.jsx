@@ -38,7 +38,7 @@ const TeacherSignup = () => {
           } else {
             M.toast({ html: 'Signup Succesfull', classes: 'green' });
             sessionStorage.setItem('token', data.token);
-            navigate('/home');
+            navigate('/createClass');
           }
         })
         .catch((error) => {
