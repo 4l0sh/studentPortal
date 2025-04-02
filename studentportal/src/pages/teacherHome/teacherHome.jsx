@@ -4,6 +4,9 @@ import './teacherHome.css';
 const TeacherHome = () => {
   const [assignments, setAssignments] = useState([]);
   const [isAddAssignment, setIsAddAssignment] = useState(false);
+  const [assignmentName, setAssignmentName] = useState('');
+  const [dueDate, setDueDate] = useState('');
+  const addDate = new Date().toISOString().split('T')[0];
   const teacherId = sessionStorage.getItem('teacherId');
 
   useEffect(() => {
@@ -23,6 +26,12 @@ const TeacherHome = () => {
         console.log(error);
       });
   }, []);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(assignmentName, dueDate);
+    console.log(addDate);
+  };
 
   return (
     <Fragment>
@@ -48,16 +57,27 @@ const TeacherHome = () => {
 
         {isAddAssignment && (
           <div className='addAssignmentContainer'>
-            <form className='addAssignmentForm'>
-              <input type='text' placeholder='Assignment Name ' />
+            <form
+              className='addAssignmentForm'
+              onSubmit={(e) => handleSubmit(e)}
+            >
+              <input
+                type='text'
+                placeholder='Assignment Name '
+                onChange={(e) => setAssignmentName(e.target.value)}
+              />
               <label htmlFor='date'>Select due date</label>
-              <input type='date' placeholder='Select due date' />
+              <input
+                type='date'
+                placeholder='Select due date'
+                onChange={(e) => setDueDate(e.target.value)}
+              />
               <button className='addAssignmentButton'>Add Assignment</button>
               <button
                 className='closeButton'
                 onClick={() => setIsAddAssignment(!isAddAssignment)}
               >
-                close
+                cancel
               </button>
             </form>
           </div>

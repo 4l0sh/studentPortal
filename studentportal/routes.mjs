@@ -257,6 +257,7 @@ router.get('/api/assignments', checkToken, (req, res) => {
     });
 });
 
+
 //test route
 router.get('/api/data', (req, res) => {
   res.send('Data');
