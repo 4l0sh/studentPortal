@@ -5,6 +5,12 @@ import M from 'materialize-css';
 import Navbar from '../../components/navbar';
 import Footer from '../../components/footer';
 
+export const assignments = [
+  { title: 'assignment 1' },
+  { title: 'assignment 2' },
+  { title: 'assignment3' },
+];
+
 const TeacherHome = () => {
   const teacherHomeLinks = [
     { label: 'Student Login', href: '/' },

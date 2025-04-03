@@ -1,0 +1,29 @@
+.studentCard h2 {
+  padding-left: 3vh;
+  text-align: left;
+}
+
+.assignmentCards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+  align-items: center;
+}
+
+.assignmentCard {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  width: 80%;
+  max-width: 400px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.assignmentCard h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #333;
+}

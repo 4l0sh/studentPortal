@@ -41,7 +41,7 @@ const StudentSignup = () => {
         } else {
           M.toast({ html: 'Signup Succesfull', classes: 'green' });
           sessionStorage.setItem('token', data.token);
-          navigate('/home');
+          navigate('/student/home');
         }
       });
   };
