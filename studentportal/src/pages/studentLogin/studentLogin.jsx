@@ -5,6 +5,11 @@ import M from 'materialize-css';
 import './studentLogin.css';
 
 const TeacherLogin = () => {
+  const studentLoginLinks = [
+    { label: 'Teacher Login', href: '/teacherLogin' },
+    { label: 'About', href: '/about' },
+    { label: 'Contact', href: '/contact' },
+  ];
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -39,7 +44,7 @@ const TeacherLogin = () => {
   return (
     <Fragment>
       <div className='mainContainer'>
-        <Navbar />
+        <Navbar links={studentLoginLinks} />
         <div className='loginContainer'>
           <div className='loginCard'>
             <h2>Log into Your Student Account </h2>

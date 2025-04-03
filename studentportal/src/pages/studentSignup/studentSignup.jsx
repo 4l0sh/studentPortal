@@ -3,6 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/navbar';
 import M from 'materialize-css';
 const StudentSignup = () => {
+  const studentSignupLinks = [
+    { label: 'Teacher Login', href: '/teacherLogin' },
+    { label: 'About', href: '/about' },
+    { label: 'Contact', href: '/contact' },
+  ];
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -43,7 +48,7 @@ const StudentSignup = () => {
   return (
     <Fragment>
       <div className='mainContainer'>
-        <Navbar />
+        <Navbar links={studentSignupLinks} />
         <div className='loginContainer'>
           <div className='loginCard'>
             <h2>Sign Up for a Student Acoount </h2>

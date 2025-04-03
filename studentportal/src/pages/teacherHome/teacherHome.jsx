@@ -2,8 +2,14 @@ import { Fragment, useEffect, useState } from 'react';
 import axios from 'axios';
 import './teacherHome.css';
 import M from 'materialize-css';
+import Navbar from '../../components/navbar';
 
 const TeacherHome = () => {
+  const teacherHomeLinks = [
+    { label: 'Student Login', href: '/' },
+    { label: 'About', href: '/about' },
+    { label: 'Contact', href: '/contact' },
+  ];
   const [assignments, setAssignments] = useState([]);
   const [isAddAssignment, setIsAddAssignment] = useState(false);
   const [assignmentName, setAssignmentName] = useState('');
@@ -65,15 +71,7 @@ const TeacherHome = () => {
   return (
     <Fragment>
       <div className='mainContainer'>
-        <div className='navBar'>
-          <div className='navBarTitle'>
-            <h2>Your Class </h2>
-          </div>
-          <div className='navBarLinks'>
-            <a href='/about'>About</a>
-            <a href='#'>Contact</a>
-          </div>
-        </div>
+        <Navbar links={teacherHomeLinks} />
         <div className='assignmentsHeader'>
           <h2>Your Assignments</h2>
           <button

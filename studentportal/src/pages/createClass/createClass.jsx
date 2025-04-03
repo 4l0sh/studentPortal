@@ -1,6 +1,12 @@
 import { Fragment, useState } from 'react';
+import Navbar from '../../components/navbar';
 import './createClass.css';
 const CreateClass = () => {
+  const createClassLinks = [
+    { label: 'Student Login', href: '/' },
+    { label: 'About', href: '/about' },
+    { label: 'Contact', href: '/contact' },
+  ];
   const [className, setClassName] = useState('');
   const [classCode, setClassCode] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -37,15 +43,7 @@ const CreateClass = () => {
   return (
     <Fragment>
       <div className='mainContainer'>
-        <div className='navBar'>
-          <div className='navBarTitle'>
-            <h2>Create Class</h2>
-          </div>
-          <div className='navBarLinks'>
-            <a href='/about'>About</a>
-            <a href='#'>Contact</a>
-          </div>
-        </div>
+        <Navbar />
         <div className='createClassContainer'>
           <div className='loginCard'>
             <h2>Create Your Class</h2>

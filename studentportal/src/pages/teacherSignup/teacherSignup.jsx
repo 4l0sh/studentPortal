@@ -4,6 +4,11 @@ import Navbar from '../../components/navbar';
 import M from 'materialize-css';
 
 const TeacherSignup = () => {
+  const teacherSignupLinks = [
+    { label: 'Student Login', href: '/' },
+    { label: 'About', href: '/about' },
+    { label: 'Contact', href: '/contact' },
+  ];
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -50,7 +55,7 @@ const TeacherSignup = () => {
   return (
     <Fragment>
       <div className='mainContainer'>
-        <Navbar />
+        <Navbar links={teacherSignupLinks} />
         <div className='loginContainer'>
           <div className='loginCard'>
             <h2>Sign Up for a Teacher Account</h2>
@@ -84,6 +89,10 @@ const TeacherSignup = () => {
               <button className='loginButton' type='submit'>
                 Sign Up
               </button>
+              <hr />
+              <p>
+                already have an account ? <a href='/teacherLogin'>Log in</a>
+              </p>
             </form>
           </div>
         </div>

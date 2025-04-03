@@ -1,21 +1,19 @@
 import { Fragment } from 'react';
 import '../studentLogin/studentLogin.css';
+import Navbar from '../../components/navbar';
 
 const About = () => {
   return (
     <Fragment>
       <div className='mainContainer'>
-        <div className='navBar'>
-          <div className='navBarTitle'>
-            <h2>Student Portal</h2>
-          </div>
-          <div className='navBarLinks'>
-            <a href='/teacherLogin'>Login as a Teacher</a>
-            <a href='/'>Login as a Student</a>
-            <a href='/about'>About</a>
-            <a href='#'>Contact</a>
-          </div>
-        </div>{' '}
+        <Navbar
+          links={[
+            { label: 'Teacher Login', href: '/teacherLogin' },
+            { label: 'Student Login', href: '/' },
+            { label: 'About', href: '/about' },
+            { label: 'Contact', href: '/contact' },
+          ]}
+        />
         <div className='aboutContainer'>
           <div className='aboutCard'>
             <h2>About</h2>
