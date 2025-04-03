@@ -89,8 +89,12 @@ const TeacherSignup = () => {
               <button className='loginButton' type='submit'>
                 Sign Up
               </button>
-              <hr />
-              <p>
+              <hr
+                style={{
+                  margin: '0px',
+                }}
+              />
+              <p style={{ margin: '0px' }}>
                 already have an account ? <a href='/teacherLogin'>Log in</a>
               </p>
             </form>

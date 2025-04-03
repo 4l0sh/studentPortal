@@ -43,7 +43,7 @@ const CreateClass = () => {
   return (
     <Fragment>
       <div className='mainContainer'>
-        <Navbar />
+        <Navbar links={createClassLinks} />
         <div className='createClassContainer'>
           <div className='loginCard'>
             <h2>Create Your Class</h2>
