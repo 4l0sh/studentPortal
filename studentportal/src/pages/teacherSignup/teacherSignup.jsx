@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/navbar';
+import Footer from '../../components/footer';
 import M from 'materialize-css';
 
 const TeacherSignup = () => {
@@ -100,6 +101,7 @@ const TeacherSignup = () => {
             </form>
           </div>
         </div>
+        <Footer />
       </div>
     </Fragment>
   );

@@ -3,6 +3,7 @@ import Navbar from '../../components/navbar';
 import dotenv from 'dotenv';
 import emailjs from '@emailjs/browser';
 import M from 'materialize-css';
+import Footer from '../../components/footer';
 
 const Contact = () => {
   const [name, setName] = useState('');
@@ -78,6 +79,7 @@ const Contact = () => {
             </form>
           </div>
         </div>
+        <Footer />
       </div>
     </Fragment>
   );

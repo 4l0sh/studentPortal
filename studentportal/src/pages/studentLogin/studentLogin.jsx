@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/navbar';
+import Footer from '../../components/footer';
 import M from 'materialize-css';
 import './studentLogin.css';
 
@@ -75,7 +76,7 @@ const TeacherLogin = () => {
             </p>
           </div>
         </div>
-        <div className='footerContainer'>footer</div>
+        <Footer />
       </div>
     </Fragment>
   );

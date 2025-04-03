@@ -3,6 +3,7 @@ import axios from 'axios';
 import './teacherHome.css';
 import M from 'materialize-css';
 import Navbar from '../../components/navbar';
+import Footer from '../../components/footer';
 
 const TeacherHome = () => {
   const teacherHomeLinks = [
@@ -139,6 +140,7 @@ const TeacherHome = () => {
             );
           })}
         </div>
+        <Footer />
       </div>
     </Fragment>
   );

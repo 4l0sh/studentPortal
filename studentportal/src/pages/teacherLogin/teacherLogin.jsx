@@ -2,6 +2,7 @@ import { Fragment, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import M from 'materialize-css';
 import Navbar from '../../components/navbar';
+import Footer from '../../components/footer';
 
 const TeacherLogin = () => {
   const teacherLoginLinks = [
@@ -74,6 +75,7 @@ const TeacherLogin = () => {
             </p>
           </div>
         </div>
+        <Footer />
       </div>
     </Fragment>
   );

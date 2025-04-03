@@ -1,6 +1,8 @@
 import { Fragment, useState } from 'react';
 import Navbar from '../../components/navbar';
+import Footer from '../../components/footer';
 import './createClass.css';
+
 const CreateClass = () => {
   const createClassLinks = [
     { label: 'Student Login', href: '/' },
@@ -63,6 +65,7 @@ const CreateClass = () => {
             </form>
           </div>
         </div>
+        <Footer />
       </div>
     </Fragment>
   );
