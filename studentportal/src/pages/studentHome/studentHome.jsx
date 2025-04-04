@@ -12,6 +12,7 @@ const StudentHome = () => {
   const [noAssignments, setNoAssignments] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
   const [classCode, setClassCode] = useState('');
+  const [message, setMessage] = useState('');
   useEffect(() => {
     const token = sessionStorage.getItem('token');
     if (!token) {
@@ -36,7 +37,25 @@ const StudentHome = () => {
   }, []);
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Class Code:', classCode);
+    fetch('http://localhost:3000/api/joinClass', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        token: sessionStorage.getItem('token'),
+      },
+      body: JSON.stringify({
+        classCode: classCode,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.message === 'Class joined successfully') {
+          setFormOpen(false);
+          setMessage(
+            'Class joined successfully login again to see assignments'
+          );
+        }
+      });
   };
 
   return (
@@ -46,6 +65,18 @@ const StudentHome = () => {
         <div className='studentHomeContainer'>
           <div className='joinClass'>
             <h1>Your Assignments</h1>
+            <p
+              style={{
+                color:
+                  message ===
+                  'Class joined successfully login again to see assignments'
+                    ? 'green'
+                    : 'red',
+                fontSize: '1.2rem',
+              }}
+            >
+              {message}
+            </p>
             <button
               className='joinClassButton loginButton'
               onClick={() => setFormOpen(!formOpen)}
