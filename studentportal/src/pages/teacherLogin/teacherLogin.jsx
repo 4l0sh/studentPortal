@@ -51,7 +51,7 @@ const TeacherLogin = () => {
         <Navbar links={teacherLoginLinks} />
         <div className='loginContainer'>
           <div className='loginCard'>
-            <h2>Log into Your Teacher account </h2>
+            <h2>Log into Your Teacher Account </h2>
             {errorMessage && <p className='error'>{errorMessage}</p>}
             <form className='loginForm' onSubmit={(e) => submitHandler(e)}>
               <input

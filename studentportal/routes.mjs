@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import { db } from './server.mjs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import { ObjectId } from 'mongodb';
 dotenv.config();
 const router = express.Router();
 const JWT_SECRET = process.env.VITE_JWT_SECRET;
@@ -360,8 +361,39 @@ router.get('/api/studentAssignments', (req, res) => {
     });
 });
 
-//test route
-router.get('/api/data', (req, res) => {
-  res.send('Data');
+//student join Class
+router.post('/api/joinClass', (req, res) => {
+  const collection = db.collection('students');
+  const classesCollection = db.collection('classes');
+  const token = req.get('token');
+  const decoded = jwt.verify(token, JWT_SECRET);
+  const studentId = new ObjectId(decoded.userId);
+  const classCode = req.body.classCode;
+  collection
+    .updateOne({ _id: studentId }, { $addToSet: { classes: classCode } })
+    .then((result) => {
+      if (result.modifiedCount === 0) {
+        return res
+          .status(400)
+          .json({ message: 'Failed to join class', userId: studentId });
+      }
+      classesCollection
+        .updateOne(
+          { classCode: classCode },
+          { $addToSet: { students: studentId } }
+        )
+        .then(() => {
+          res.status(200).json({ message: 'Class joined successfully' });
+        })
+        .catch((error) => {
+          console.error(error);
+          res.status(500).json({ message: 'Error updating class', error });
+        });
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).json({ message: 'Internal server error', error });
+    });
 });
+
 export default router;
