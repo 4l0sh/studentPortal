@@ -117,6 +117,7 @@ router.post('/api/studentLogin', (req, res) => {
             role: 'student',
             name: result.name,
             email: result.email,
+            classes: result.classes,
             iss: 'http://localhost:3000',
           },
           JWT_SECRET,
@@ -326,6 +327,37 @@ router.post('/api/createClass', checkToken, (req, res) => {
         });
     }
   });
+});
+
+//student get assignments
+router.get('/api/studentAssignments', (req, res) => {
+  const collection = db.collection('assignments');
+  const token = req.get('token');
+  const decoded = jwt.verify(token, JWT_SECRET);
+  const studentId = decoded.userId;
+  const classes = decoded.classes;
+
+  if (!studentId) {
+    return res.status(400).json({
+      message: 'No id found, please check if you are logged in',
+    });
+  } else if (decoded.role !== 'student') {
+    return res.status(403).json({ message: 'You are not authorized' });
+  }
+
+  collection
+    .find({ classCode: { $in: classes } })
+    .toArray()
+    .then((result) => {
+      if (result.length === 0) {
+        return res.status(404).json({ message: 'No assignments found' });
+      }
+      res.json(result);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({ message: 'Internal server error' });
+    });
 });
 
 //test route

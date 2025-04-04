@@ -19,10 +19,10 @@ const TeacherLogin = () => {
   const submitHandle = (e) => {
     e.preventDefault();
     if (!email || !password) {
-      alert('Please fill all the fields');
+      setErrorMessage('Please fill all the fields');
       return;
     }
-    fetch('http://localhost:3000/api/teacherLogin', {
+    fetch('http://localhost:3000/api/studentLogin', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -62,12 +62,11 @@ const TeacherLogin = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
               <button className='loginButton' type='submit'>
-                Log In{' '}
+                Log In
               </button>
             </form>
             <hr />
             <p>
-              {' '}
               <a href='#'>Forgot Password?</a> reset your password
             </p>
 
