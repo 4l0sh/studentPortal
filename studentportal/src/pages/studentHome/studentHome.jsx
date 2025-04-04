@@ -10,6 +10,8 @@ const StudentHome = () => {
   ];
   const [Assignments, setAssignments] = useState([]);
   const [noAssignments, setNoAssignments] = useState(false);
+  const [formOpen, setFormOpen] = useState(false);
+  const [classCode, setClassCode] = useState('');
   useEffect(() => {
     const token = sessionStorage.getItem('token');
     if (!token) {
@@ -32,6 +34,10 @@ const StudentHome = () => {
         }
       });
   }, []);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('Class Code:', classCode);
+  };
 
   return (
     <Fragment>
@@ -40,10 +46,35 @@ const StudentHome = () => {
         <div className='studentHomeContainer'>
           <div className='joinClass'>
             <h1>Your Assignments</h1>
-            <button className='joinClassButton loginButton'>
+            <button
+              className='joinClassButton loginButton'
+              onClick={() => setFormOpen(!formOpen)}
+            >
               Join A Class
             </button>
           </div>
+          {formOpen && (
+            <div className='joinClassFormContainer'>
+              <form className='joinClassForm' onSubmit={(e) => handleSubmit(e)}>
+                <h2>Join A Class</h2>
+                <input
+                  type='text'
+                  placeholder='Class Code'
+                  onChange={(e) => setClassCode(e.target.value)}
+                />
+                <button type='submit' className='joinButton'>
+                  Join
+                </button>
+                <button
+                  className='close'
+                  onClick={() => setFormOpen(!formOpen)}
+                >
+                  Close{' '}
+                </button>
+              </form>
+            </div>
+          )}
+
           <div className='assignmentsContainer'>
             {noAssignments && (
               <div className='noAssignments'>
