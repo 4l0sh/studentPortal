@@ -4,7 +4,6 @@ import './studentHome.css';
 
 const StudentHome = () => {
   const studentHomeLinks = [
-    { label: 'Home', href: '/student/home' },
     { label: 'About', href: '/about' },
     { label: 'Contact', href: '/contact' },
   ];
@@ -13,6 +12,7 @@ const StudentHome = () => {
   const [formOpen, setFormOpen] = useState(false);
   const [classCode, setClassCode] = useState('');
   const [message, setMessage] = useState('');
+  const [homeworkFormOpen, setHomeworkFormOpen] = useState({});
   useEffect(() => {
     const token = sessionStorage.getItem('token');
     if (!token) {
@@ -55,6 +55,35 @@ const StudentHome = () => {
             'Class joined successfully login again to see assignments'
           );
         }
+      });
+  };
+  const handleHomeworkSubmit = (e, assignmentId) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('homework', e.target.homework.files[0]);
+    formData.append('assignmentId', assignmentId);
+    fetch('http://localhost:3000/api/submitHomework', {
+      method: 'POST',
+      headers: {
+        token: sessionStorage.getItem('token'),
+      },
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.message === 'Homework submitted successfully') {
+          setMessage('Homework submitted successfully');
+          setHomeworkFormOpen((prev) => ({
+            ...prev,
+            [assignmentId]: false,
+          }));
+        } else {
+          setMessage(data.message || 'Something went wrong');
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        setMessage('Something went wrong');
       });
   };
 
@@ -131,7 +160,38 @@ const StudentHome = () => {
                     View Assignment File
                   </a>
                 </p>
-                <button className='loginButton'>Submit</button>
+                <button
+                  className='loginButton'
+                  onClick={() => {
+                    setHomeworkFormOpen((prev) => ({
+                      ...prev,
+                      [assignment._id]: !prev[assignment._id],
+                    }));
+                  }}
+                >
+                  Submit Homework
+                </button>
+
+                {homeworkFormOpen[assignment._id] && (
+                  <form
+                    className='homeworkForm'
+                    onSubmit={(e) => handleHomeworkSubmit(e, assignment._id)}
+                  >
+                    <input type='file' name='homework' />
+                    <button type='submit'>Upload</button>
+                    <button
+                      className='close'
+                      onClick={() => {
+                        setHomeworkFormOpen((prev) => ({
+                          ...prev,
+                          [assignment._id]: false,
+                        }));
+                      }}
+                    >
+                      close
+                    </button>
+                  </form>
+                )}
               </div>
             ))}
           </div>

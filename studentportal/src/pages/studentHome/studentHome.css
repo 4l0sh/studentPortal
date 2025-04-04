@@ -131,7 +131,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: rgba(255, 255, 255, 0.281);
+  background-color: rgba(255, 255, 255, 0.623);
   backdrop-filter: blur(10px);
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -194,6 +194,66 @@
     transform 0.2s ease;
 }
 .close:hover {
+  background-color: #ff0000;
+  transform: scale(1.05);
+}
+.homeworkForm {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 350px;
+  height: 250px;
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  padding: 20px;
+  gap: 15px;
+  position: absolute;
+  z-index: 1000;
+}
+
+.homeworkForm input[type='file'] {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 90%;
+  transition: border-color 0.3s ease;
+}
+
+.homeworkForm input[type='file']:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+
+.homeworkForm button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
+}
+
+.homeworkForm button[type='submit'] {
+  background-color: #28a745;
+}
+
+.homeworkForm button[type='submit']:hover {
+  background-color: #218838;
+  transform: scale(1.05);
+}
+
+.homeworkForm .close {
+  background-color: #ec4141;
+}
+
+.homeworkForm .close:hover {
   background-color: #ff0000;
   transform: scale(1.05);
 }

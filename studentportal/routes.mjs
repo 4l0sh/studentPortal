@@ -396,4 +396,39 @@ router.post('/api/joinClass', (req, res) => {
     });
 });
 
+//submit homework
+router.post('/api/submitHomework', upload.single('homework'), (req, res) => {
+  const { assignmentId } = req.body;
+  const file = req.file;
+  const filePath = file.path;
+  const token = req.get('token');
+  const decoded = jwt.verify(token, JWT_SECRET);
+  const studentId = decoded.userId;
+  const studentName = decoded.name;
+  const collection = db.collection('assignments');
+  collection
+    .updateOne(
+      { _id: new ObjectId(assignmentId) },
+      {
+        $addToSet: {
+          submissions: {
+            studentId: studentId,
+            studentName: studentName,
+            filePath: filePath,
+          },
+        },
+      }
+    )
+    .then((result) => {
+      if (result.modifiedCount === 0) {
+        return res.status(400).json({ message: 'Failed to submit homework' });
+      }
+      res.status(200).json({ message: 'Homework submitted successfully' });
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).json({ message: 'Error submitting homework', error });
+    });
+});
+
 export default router;
