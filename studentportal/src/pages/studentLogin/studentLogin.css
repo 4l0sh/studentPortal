@@ -181,7 +181,7 @@ hr {
   margin-top: 10px;
   text-align: center;
   top: 20px;
-  z-index: 100;
+  z-index: 2005;
   left: 50%;
   transform: translateX(-50%);
 }

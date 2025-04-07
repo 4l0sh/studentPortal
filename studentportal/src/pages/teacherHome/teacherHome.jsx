@@ -96,9 +96,6 @@ const TeacherHome = () => {
     }).then((response) => {
       if (response.status === 200) {
         response.json().then((data) => {
-          setAssignments(data);
-          setGrade('');
-          setFeedback('');
           M.toast({ html: 'Grade Submitted', classes: 'green' });
         });
       } else {

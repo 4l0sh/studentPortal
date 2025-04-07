@@ -68,10 +68,6 @@ const TeacherLogin = () => {
             </form>
             <hr />
             <p>
-              <a href='#'>Forgot Password?</a> reset your password
-            </p>
-
-            <p>
               Don't have an account ? <a href='/signup'> Create account </a>
             </p>
           </div>
