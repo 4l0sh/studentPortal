@@ -13,6 +13,7 @@ const StudentHome = () => {
   const [classCode, setClassCode] = useState('');
   const [message, setMessage] = useState('');
   const [homeworkFormOpen, setHomeworkFormOpen] = useState({});
+  const [viewGrade, setViewGrade] = useState(false);
   useEffect(() => {
     const token = sessionStorage.getItem('token');
     if (!token) {
@@ -191,6 +192,58 @@ const StudentHome = () => {
                       close
                     </button>
                   </form>
+                )}
+                <button
+                  className='loginButton'
+                  onClick={() => {
+                    setViewGrade((prev) => ({
+                      ...prev,
+                      [assignment._id]: !prev[assignment._id],
+                    }));
+                  }}
+                >
+                  See Grade
+                </button>
+                {viewGrade[assignment._id] && (
+                  <div className='homeworkForm'>
+                    <h3>Grade</h3>
+                    {assignment.submissions &&
+                    assignment.submissions.some(
+                      (submission) =>
+                        submission.studentId ===
+                        sessionStorage.getItem('studentId')
+                    ) ? (
+                      assignment.submissions
+                        .filter(
+                          (submission) =>
+                            submission.studentId ===
+                            sessionStorage.getItem('studentId')
+                        )
+                        .map((submission, i) => (
+                          <div key={i}>
+                            <p>
+                              <strong>Grade:</strong> {submission.grade}
+                            </p>
+                            <p>
+                              <strong>Feedback:</strong> {submission.feedback}
+                            </p>
+                          </div>
+                        ))
+                    ) : (
+                      <p>You have not submitted this assignment yet.</p>
+                    )}
+                    <button
+                      className='close'
+                      onClick={() => {
+                        setViewGrade((prev) => ({
+                          ...prev,
+                          [assignment._id]: false,
+                        }));
+                      }}
+                    >
+                      close
+                    </button>
+                  </div>
                 )}
               </div>
             ))}

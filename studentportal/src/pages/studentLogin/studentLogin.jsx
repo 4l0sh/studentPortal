@@ -38,6 +38,7 @@ const TeacherLogin = () => {
         } else {
           M.toast({ html: 'Login Succesfull', classes: 'green' });
           sessionStorage.setItem('token', data.token);
+          sessionStorage.setItem('studentId', data.studentId);
           navigate('/student/home');
         }
       });

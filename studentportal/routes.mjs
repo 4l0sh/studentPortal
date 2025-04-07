@@ -129,6 +129,7 @@ router.post('/api/studentLogin', (req, res) => {
           status: 200,
           name: result.name,
           message: 'Login successful',
+          studentId: result._id,
           token: token,
         };
         return res.json(response);
@@ -415,6 +416,7 @@ router.post('/api/submitHomework', upload.single('homework'), (req, res) => {
             studentId: studentId,
             studentName: studentName,
             filePath: filePath,
+            submissionDate: new Date().toISOString().split('T')[0],
           },
         },
       }

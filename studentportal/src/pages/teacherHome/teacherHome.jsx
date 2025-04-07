@@ -1,5 +1,6 @@
+'use client';
+
 import { Fragment, useEffect, useState } from 'react';
-import axios from 'axios';
 import './teacherHome.css';
 import M from 'materialize-css';
 import Navbar from '../../components/navbar';
@@ -21,6 +22,7 @@ const TeacherHome = () => {
   const [isAddAssignment, setIsAddAssignment] = useState(false);
   const [assignmentName, setAssignmentName] = useState('');
   const [dueDate, setDueDate] = useState('');
+  const [showSubmittions, setShowSubmittions] = useState({});
   const addDate = new Date().toISOString().split('T')[0];
 
   useEffect(() => {
@@ -141,6 +143,91 @@ const TeacherHome = () => {
                   >
                     View Description File
                   </a>
+                )}
+                <button
+                  className='loginButton'
+                  onClick={() => {
+                    setShowSubmittions((prev) => ({
+                      ...prev,
+                      [assignment._id]: !prev[assignment._id],
+                    }));
+                  }}
+                >
+                  Show Submittions{' '}
+                </button>
+
+                {showSubmittions[assignment._id] && (
+                  <div className='submittionsCard'>
+                    <h3>Submissions</h3>
+                    <div className='submissionsContent'>
+                      {assignment.submissions.length === 0 && (
+                        <p>No Submissions Yet</p>
+                      )}
+                      {assignment.submissions.map((submission) => {
+                        return (
+                          <div key={submission._id} className='submissionCard'>
+                            <p>
+                              <strong>Submitted By:</strong>{' '}
+                              {submission.studentName}
+                            </p>
+                            <p>
+                              <strong>Submitted On:</strong>{' '}
+                              {submission.submissionDate}
+                            </p>
+                            {submission.filePath && (
+                              <a
+                                href={`http://localhost:3000/${submission.filePath}`}
+                                target='_blank'
+                                rel='noopener noreferrer'
+                              >
+                                View Submission File
+                              </a>
+                            )}
+                            {!submission.grade ? (
+                              <form className='marksForm'>
+                                <label htmlFor='marks'>Grade</label>
+                                <input
+                                  type='number'
+                                  name='marks'
+                                  placeholder='Enter Marks'
+                                />
+                                <label htmlFor='feedback'>Feedback</label>
+                                <textarea
+                                  name='feedback'
+                                  placeholder='Enter Feedback'
+                                ></textarea>
+                                <button type='submit' className='loginButton'>
+                                  Submit Grade
+                                </button>
+                              </form>
+                            ) : (
+                              <div className='marksCard'>
+                                <p>
+                                  <strong>Grade: </strong>
+                                  {submission.grade}
+                                </p>
+                                <p>
+                                  <strong>Feedback: </strong>
+                                  {submission.feedback}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                      <button
+                        className='submissionButton'
+                        onClick={() =>
+                          setShowSubmittions((prev) => ({
+                            ...prev,
+                            [assignment._id]: false,
+                          }))
+                        }
+                      >
+                        close
+                      </button>
+                    </div>
+                  </div>
                 )}
               </div>
             );
