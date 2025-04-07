@@ -229,6 +229,30 @@ router.post('/api/teacherLogin', (req, res) => {
       res.status(500).json({ message: 'Internal server error' });
     });
 });
+//get classCode
+router.get('/api/getClassCode', (req, res) => {
+  const collection = db.collection('classes');
+  const token = req.get('token');
+  const decoded = jwt.verify(token, JWT_SECRET);
+  const teacherId = decoded.userId;
+  if (!teacherId) {
+    return res.status(400).json({
+      message: 'No id found, please check if you are logged in',
+    });
+  }
+  collection
+    .findOne({ teacherId: teacherId })
+    .then((result) => {
+      if (!result) {
+        return res.status(404).json({ message: 'No class found' });
+      }
+      res.json({ classCode: result.classCode });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({ message: 'Internal server error' });
+    });
+});
 
 //get assignments
 router.get('/api/assignments', checkToken, (req, res) => {
@@ -407,21 +431,56 @@ router.post('/api/submitHomework', upload.single('homework'), (req, res) => {
   const studentId = decoded.userId;
   const studentName = decoded.name;
   const collection = db.collection('assignments');
+
+  // First find the assignment and check if student already has a submission
   collection
-    .updateOne(
-      { _id: new ObjectId(assignmentId) },
-      {
-        $addToSet: {
-          submissions: {
-            submissionID: new ObjectId(),
-            studentId: studentId,
-            studentName: studentName,
-            filePath: filePath,
-            submissionDate: new Date().toISOString().split('T')[0],
-          },
-        },
+    .findOne({ _id: new ObjectId(assignmentId) })
+    .then((assignment) => {
+      if (!assignment) {
+        return res.status(404).json({ message: 'Assignment not found' });
       }
-    )
+
+      // Find existing submission by this student
+      const existingSubmission = assignment.submissions.find(
+        (sub) => sub.studentId === studentId
+      );
+
+      if (existingSubmission) {
+        // Update existing submission
+        return collection.updateOne(
+          {
+            _id: new ObjectId(assignmentId),
+            'submissions.studentId': studentId,
+          },
+          {
+            $set: {
+              'submissions.$.filePath': filePath,
+              'submissions.$.submissionDate': new Date()
+                .toISOString()
+                .split('T')[0],
+              'submissions.$.grade': null, // Reset grade when resubmitting
+              'submissions.$.feedback': null, // Reset feedback when resubmitting
+            },
+          }
+        );
+      } else {
+        // Create new submission
+        return collection.updateOne(
+          { _id: new ObjectId(assignmentId) },
+          {
+            $push: {
+              submissions: {
+                submissionID: new ObjectId(),
+                studentId: studentId,
+                studentName: studentName,
+                filePath: filePath,
+                submissionDate: new Date().toISOString().split('T')[0],
+              },
+            },
+          }
+        );
+      }
+    })
     .then((result) => {
       if (result.modifiedCount === 0) {
         return res.status(400).json({ message: 'Failed to submit homework' });
