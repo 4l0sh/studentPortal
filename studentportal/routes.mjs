@@ -413,6 +413,7 @@ router.post('/api/submitHomework', upload.single('homework'), (req, res) => {
       {
         $addToSet: {
           submissions: {
+            submissionID: new ObjectId(),
             studentId: studentId,
             studentName: studentName,
             filePath: filePath,
@@ -430,6 +431,39 @@ router.post('/api/submitHomework', upload.single('homework'), (req, res) => {
     .catch((error) => {
       console.error(error);
       res.status(500).json({ message: 'Error submitting homework', error });
+    });
+});
+
+//grade homework
+router.post('/api/gradeSubmission', checkToken, (req, res) => {
+  const collection = db.collection('assignments');
+  const submissionId = req.body.submissionId;
+  const assignmentId = req.body.assignmentId;
+  const grade = req.body.grade;
+  const feedback = req.body.feedback;
+
+  collection
+    .updateOne(
+      {
+        _id: new ObjectId(assignmentId),
+        'submissions.submissionID': new ObjectId(submissionId),
+      },
+      {
+        $set: {
+          'submissions.$.grade': grade,
+          'submissions.$.feedback': feedback,
+        },
+      }
+    )
+    .then((result) => {
+      if (result.modifiedCount === 0) {
+        return res.status(400).json({ message: 'Failed to grade submission' });
+      }
+      res.status(200).json({ message: 'Submission graded successfully' });
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).json({ message: 'Error grading submission', error });
     });
 });
 

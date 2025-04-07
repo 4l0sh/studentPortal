@@ -1,5 +1,4 @@
 'use client';
-
 import { Fragment, useEffect, useState } from 'react';
 import './teacherHome.css';
 import M from 'materialize-css';
@@ -18,6 +17,9 @@ const TeacherHome = () => {
     { label: 'About', href: '/about' },
     { label: 'Contact', href: '/contact' },
   ];
+  const [grade, setGrade] = useState('');
+  const [feedback, setFeedback] = useState('');
+  const [assignmentId, setAssignmentId] = useState('');
   const [assignments, setAssignments] = useState([]);
   const [isAddAssignment, setIsAddAssignment] = useState(false);
   const [assignmentName, setAssignmentName] = useState('');
@@ -70,6 +72,34 @@ const TeacherHome = () => {
           setDueDate('');
           M.toast({ html: 'Assignment Added', classes: 'green' });
           window.location.reload();
+        });
+      } else {
+        M.toast({ html: 'Something went wrong', classes: 'red' });
+      }
+    });
+  };
+
+  const handleGradeSubmit = (e, submissionId, assignmentId) => {
+    e.preventDefault();
+    fetch('http://localhost:3000/api/gradeSubmission', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        token: sessionStorage.getItem('token'),
+      },
+      body: JSON.stringify({
+        assignmentId,
+        submissionId,
+        grade,
+        feedback,
+      }),
+    }).then((response) => {
+      if (response.status === 200) {
+        response.json().then((data) => {
+          setAssignments(data);
+          setGrade('');
+          setFeedback('');
+          M.toast({ html: 'Grade Submitted', classes: 'green' });
         });
       } else {
         M.toast({ html: 'Something went wrong', classes: 'red' });
@@ -165,7 +195,10 @@ const TeacherHome = () => {
                       )}
                       {assignment.submissions.map((submission) => {
                         return (
-                          <div key={submission._id} className='submissionCard'>
+                          <div
+                            key={submission.submissionID}
+                            className='submissionCard'
+                          >
                             <p>
                               <strong>Submitted By:</strong>{' '}
                               {submission.studentName}
@@ -184,17 +217,28 @@ const TeacherHome = () => {
                               </a>
                             )}
                             {!submission.grade ? (
-                              <form className='marksForm'>
+                              <form
+                                className='marksForm'
+                                onSubmit={(e) =>
+                                  handleGradeSubmit(
+                                    e,
+                                    submission.submissionID,
+                                    assignment._id
+                                  )
+                                }
+                              >
                                 <label htmlFor='marks'>Grade</label>
                                 <input
                                   type='number'
                                   name='marks'
                                   placeholder='Enter Marks'
+                                  onChange={(e) => setGrade(e.target.value)}
                                 />
                                 <label htmlFor='feedback'>Feedback</label>
                                 <textarea
                                   name='feedback'
                                   placeholder='Enter Feedback'
+                                  onChange={(e) => setFeedback(e.target.value)}
                                 ></textarea>
                                 <button type='submit' className='loginButton'>
                                   Submit Grade
