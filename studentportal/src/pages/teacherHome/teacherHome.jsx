@@ -1,5 +1,6 @@
 'use client';
 import { Fragment, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './teacherHome.css';
 import M from 'materialize-css';
 import Navbar from '../../components/navbar';
@@ -12,6 +13,7 @@ export const assignments = [
 ];
 
 const TeacherHome = () => {
+  const navigate = useNavigate();
   const teacherHomeLinks = [
     { label: 'Student Login', href: '/' },
     { label: 'About', href: '/about' },
@@ -25,27 +27,32 @@ const TeacherHome = () => {
   const [assignmentName, setAssignmentName] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [showSubmittions, setShowSubmittions] = useState({});
+  const [message, setMessage] = useState('');
   const addDate = new Date().toISOString().split('T')[0];
 
   useEffect(() => {
-    const fetchAssignments = async () => {
-      fetch('http://localhost:3000/api/assignments', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          token: sessionStorage.getItem('token'),
-        },
+    const token = sessionStorage.getItem('token');
+    if (!token) {
+      navigate('/');
+      return;
+    }
+
+    fetch('http://localhost:3000/api/assignments', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        token: token,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setAssignments(data);
       })
-        .then((response) => response.json())
-        .then((data) => {
-          setAssignments(data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    };
-    fetchAssignments();
-  }, []);
+      .catch((error) => {
+        console.log(error);
+        setMessage('Something went wrong while fetching assignments');
+      });
+  }, [navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -70,11 +77,11 @@ const TeacherHome = () => {
           setIsAddAssignment(false);
           setAssignmentName('');
           setDueDate('');
-          M.toast({ html: 'Assignment Added', classes: 'green' });
+          setMessage('Assignment added successfully');
           window.location.reload();
         });
       } else {
-        M.toast({ html: 'Something went wrong', classes: 'red' });
+        setMessage('Something went wrong while adding the assignment');
       }
     });
   };
@@ -96,187 +103,258 @@ const TeacherHome = () => {
     }).then((response) => {
       if (response.status === 200) {
         response.json().then((data) => {
-          M.toast({ html: 'Grade Submitted', classes: 'green' });
+          setMessage('Grade submitted successfully');
         });
       } else {
-        M.toast({ html: 'Something went wrong', classes: 'red' });
+        setMessage('Something went wrong while submitting the grade');
       }
     });
   };
 
+  const handleLogout = () => {
+    sessionStorage.removeItem('token');
+    navigate('/');
+  };
+
   return (
-    <Fragment>
-      <div className='mainContainer'>
-        <Navbar links={teacherHomeLinks} />
-        <div className='assignmentsHeader'>
-          <h2>Your Assignments</h2>
-          <button
-            className='addAssignmentButton'
-            onClick={() => setIsAddAssignment(!isAddAssignment)}
-          >
-            Add Assignment
-          </button>
+    <div className="dashboard">
+      {/* Sidebar */}
+      <div className="sidebar">
+        <div className="sidebar-header">
+          <h1>
+            <span className="logo">U</span>
+            University Portal
+          </h1>
+        </div>
+        <nav className="sidebar-menu">
+          <div className="menu-item active">
+            <i className="fas fa-th-large"></i>
+            Dashboard
+          </div>
+          <div className="menu-item" onClick={handleLogout}>
+            <i className="fas fa-sign-out-alt"></i>
+            Logout
+          </div>
+        </nav>
+      </div>
+
+      {/* Main Content */}
+      <div className="main-content">
+        {/* Header */}
+        <div className="dashboard-header">
+          <div className="welcome-text">
+            <h1>Teacher Dashboard</h1>
+            <p>Manage your assignments and grades here</p>
+          </div>
+          <div className="header-actions">
+            <button 
+              className="action-button"
+              onClick={() => setIsAddAssignment(!isAddAssignment)}
+            >
+              <i className="fas fa-plus"></i>
+              New Assignment
+            </button>
+          </div>
         </div>
 
-        {isAddAssignment && (
-          <div className='addAssignmentContainer'>
-            <form
-              className='addAssignmentForm'
-              onSubmit={(e) => handleSubmit(e)}
-              encType='multipart/form-data'
-            >
-              <input
-                type='text'
-                placeholder='Assignment Name '
-                onChange={(e) => setAssignmentName(e.target.value)}
-              />
-              <label htmlFor='date'>Select due date</label>
-              <input
-                type='date'
-                placeholder='Select due date'
-                onChange={(e) => setDueDate(e.target.value)}
-              />
-              <label htmlFor='description'>Select a description file</label>
-              <input type='file' name='assignmentFile' />
-              <button className='addAssignmentButton'>Add Assignment</button>
-              <button
-                className='closeButton'
-                onClick={() => setIsAddAssignment(!isAddAssignment)}
-              >
-                cancel
-              </button>
-            </form>
+        {message && (
+          <div className={`message-banner ${message.includes('successfully') ? 'success' : 'error'}`}>
+            {message}
           </div>
         )}
 
-        <div className='assignmentsContainer'>
-          {assignments.map((assignment) => {
-            return (
-              <div key={assignment._id} className='assignmentCard'>
-                <h3>{assignment.assignmentName}</h3>
-                <p>
-                  <strong>Due: </strong>
-                  {assignment.dueDate}
-                </p>
-                <p>
-                  <strong>Added: </strong>
-                  {assignment.addDate}
-                </p>
-                {assignment.filePath && (
-                  <a
-                    href={`http://localhost:3000/${assignment.filePath}`}
-                    target='_blank'
-                    rel='noopener noreferrer'
+        {/* Add Assignment Modal */}
+        {isAddAssignment && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <h2>Add New Assignment</h2>
+              <form onSubmit={handleSubmit} encType="multipart/form-data">
+                <div className="form-group">
+                  <label>Assignment Name</label>
+                  <input
+                    type="text"
+                    placeholder="Enter assignment name"
+                    onChange={(e) => setAssignmentName(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Due Date</label>
+                  <input
+                    type="date"
+                    onChange={(e) => setDueDate(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Assignment File</label>
+                  <input type="file" name="assignmentFile" required />
+                </div>
+                <div className="modal-actions">
+                  <button type="submit" className="submit-button">
+                    Add
+                  </button>
+                  <button 
+                    type="button" 
+                    className="cancel-button"
+                    onClick={() => setIsAddAssignment(false)}
                   >
-                    View Description File
-                  </a>
-                )}
-                <button
-                  className='loginButton'
-                  onClick={() => {
-                    setShowSubmittions((prev) => ({
-                      ...prev,
-                      [assignment._id]: !prev[assignment._id],
-                    }));
-                  }}
-                >
-                  Show Submittions{' '}
-                </button>
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
 
+        {/* Assignments Grid */}
+        <div className="assignments-grid">
+          {assignments.length === 0 ? (
+            <div className="empty-state">
+              <i className="fas fa-book-open"></i>
+              <h2>No Assignments Found</h2>
+              <p>Add a new assignment to get started</p>
+            </div>
+          ) : (
+            assignments.map((assignment) => (
+              <div key={assignment._id} className="assignment-card">
+                <div className="assignment-header">
+                  <h3>{assignment.assignmentName}</h3>
+                  <span className="date-badge">
+                    Added on: {assignment.addDate}
+                  </span>
+                </div>
+                
+                <div className="assignment-content">
+                  <div className="assignment-info">
+                    <p>
+                      <i className="fas fa-clock"></i>
+                      Due: {assignment.dueDate}
+                    </p>
+                    <a
+                      href={`http://localhost:3000/${assignment.filePath}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="view-file"
+                    >
+                      <i className="fas fa-file-alt"></i>
+                      View Assignment
+                    </a>
+                  </div>
+
+                  <div className="assignment-actions">
+                    <button
+                      className="action-button"
+                      onClick={() => {
+                        setShowSubmittions((prev) => ({
+                          ...prev,
+                          [assignment._id]: !prev[assignment._id],
+                        }));
+                      }}
+                    >
+                      <i className="fas fa-users"></i>
+                      View Submissions
+                    </button>
+                  </div>
+                </div>
+
+                {/* Submissions Modal */}
                 {showSubmittions[assignment._id] && (
-                  <div className='submittionsCard'>
-                    <h3>Submissions</h3>
-                    <div className='submissionsContent'>
-                      {assignment.submissions.length === 0 && (
-                        <p>No Submissions Yet</p>
-                      )}
-                      {assignment.submissions.map((submission) => {
-                        return (
-                          <div
-                            key={submission.submissionID}
-                            className='submissionCard'
-                          >
-                            <p>
-                              <strong>Submitted By:</strong>{' '}
-                              {submission.studentName}
-                            </p>
-                            <p>
-                              <strong>Submitted On:</strong>{' '}
-                              {submission.submissionDate}
-                            </p>
-                            {submission.filePath && (
-                              <a
-                                href={`http://localhost:3000/${submission.filePath}`}
-                                target='_blank'
-                                rel='noopener noreferrer'
-                              >
-                                View Submission File
-                              </a>
-                            )}
-                            {!submission.grade ? (
-                              <form
-                                className='marksForm'
-                                onSubmit={(e) =>
-                                  handleGradeSubmit(
-                                    e,
-                                    submission.submissionID,
-                                    assignment._id
-                                  )
-                                }
-                              >
-                                <label htmlFor='marks'>Grade</label>
-                                <input
-                                  type='number'
-                                  name='marks'
-                                  placeholder='Enter Marks'
-                                  onChange={(e) => setGrade(e.target.value)}
-                                />
-                                <label htmlFor='feedback'>Feedback</label>
-                                <textarea
-                                  name='feedback'
-                                  placeholder='Enter Feedback'
-                                  onChange={(e) => setFeedback(e.target.value)}
-                                ></textarea>
-                                <button type='submit' className='loginButton'>
-                                  Submit Grade
-                                </button>
-                              </form>
-                            ) : (
-                              <div className='marksCard'>
-                                <p>
-                                  <strong>Grade: </strong>
-                                  {submission.grade}
-                                </p>
-                                <p>
-                                  <strong>Feedback: </strong>
-                                  {submission.feedback}
-                                </p>
+                  <div className="modal-overlay">
+                    <div className="modal-content submissions-modal">
+                      <h2>Submissions for {assignment.assignmentName}</h2>
+                      <div className="submissions-list">
+                        {assignment.submissions.length === 0 ? (
+                          <p className="no-submission">
+                            No submissions for this assignment yet.
+                          </p>
+                        ) : (
+                          assignment.submissions.map((submission) => (
+                            <div key={submission.submissionID} className="submission-card">
+                              <div className="submission-header">
+                                <h4>{submission.studentName}</h4>
+                                <span className="date-badge">
+                                  Submitted on: {submission.submissionDate}
+                                </span>
                               </div>
-                            )}
-                          </div>
-                        );
-                      })}
+                              
+                              <div className="submission-content">
+                                <a
+                                  href={`http://localhost:3000/${submission.filePath}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="view-file"
+                                >
+                                  <i className="fas fa-file-alt"></i>
+                                  View Submission
+                                </a>
+
+                                {!submission.grade ? (
+                                  <form 
+                                    className="grade-form"
+                                    onSubmit={(e) => handleGradeSubmit(e, submission.submissionID, assignment._id)}
+                                  >
+                                    <div className="form-group">
+                                      <label>Grade</label>
+                                      <input
+                                        type="number"
+                                        min="1"
+                                        max="10"
+                                        step="0.1"
+                                        placeholder="Enter grade"
+                                        onChange={(e) => setGrade(e.target.value)}
+                                        required
+                                      />
+                                    </div>
+                                    <div className="form-group">
+                                      <label>Feedback</label>
+                                      <textarea
+                                        placeholder="Enter feedback"
+                                        onChange={(e) => setFeedback(e.target.value)}
+                                        required
+                                      ></textarea>
+                                    </div>
+                                    <button type="submit" className="submit-button">
+                                      Submit Grade
+                                    </button>
+                                  </form>
+                                ) : (
+                                  <div className="grade-details">
+                                    <div className="grade-value">
+                                      <span>Grade</span>
+                                      <h3>{submission.grade}</h3>
+                                    </div>
+                                    <div className="grade-feedback">
+                                      <span>Feedback</span>
+                                      <p>{submission.feedback}</p>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
                       <button
-                        className='submissionButton'
-                        onClick={() =>
+                        className="close-button"
+                        onClick={() => {
                           setShowSubmittions((prev) => ({
                             ...prev,
                             [assignment._id]: false,
-                          }))
-                        }
+                          }));
+                        }}
                       >
-                        close
+                        Close
                       </button>
                     </div>
                   </div>
                 )}
               </div>
-            );
-          })}
+            ))
+          )}
         </div>
-        <Footer />
       </div>
-    </Fragment>
+    </div>
   );
 };
 

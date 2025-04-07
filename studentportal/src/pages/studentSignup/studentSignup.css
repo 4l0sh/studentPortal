@@ -3,7 +3,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Roboto', Arial, sans-serif;
-  height: 100vh;
+  min-height: 100vh;
   width: 100%;
   box-sizing: border-box;
   background-color: #f8f9fa;
@@ -14,8 +14,8 @@ body {
 .mainContainer {
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
   width: 100%;
-  height: 100vh;
   box-sizing: border-box;
 }
 
@@ -58,21 +58,24 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80%;
-  padding: 20px;
+  flex: 1;
+  padding: 40px 20px;
+  margin: 20px 0;
+  overflow-y: auto;
 }
 
 .loginCard {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   width: 450px;
-  padding: 40px;
+  padding: 30px;
   background-color: white;
   border-radius: 12px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin: 20px 0;
 }
 
 .loginCard:hover {
@@ -159,25 +162,6 @@ body {
   cursor: not-allowed;
 }
 
-.loginOptions {
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-  margin-top: 10px;
-}
-
-.forgotPassword {
-  color: #4361ee;
-  text-decoration: none;
-  font-size: 0.9rem;
-  transition: color 0.3s ease;
-}
-
-.forgotPassword:hover {
-  color: #3a56d4;
-  text-decoration: underline;
-}
-
 hr {
   width: 100%;
   margin: 25px 0;
@@ -195,14 +179,14 @@ hr {
   font-size: 0.95rem;
 }
 
-.signupLink {
+.loginLink {
   color: #4361ee;
   text-decoration: none;
   font-weight: 600;
   transition: color 0.3s ease;
 }
 
-.signupLink:hover {
+.loginLink:hover {
   color: #3a56d4;
   text-decoration: underline;
 }
@@ -267,50 +251,188 @@ hr {
   animation: pulse 1.5s infinite;
 }
 
-.aboutContainer {
+/* Password strength indicator */
+.passwordStrength {
+  height: 4px;
+  width: 100%;
+  background-color: #e9ecef;
+  border-radius: 2px;
+  margin-top: 5px;
+  overflow: hidden;
+}
+
+.passwordStrengthBar {
+  height: 100%;
+  width: 0;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.strength-weak {
+  width: 33%;
+  background-color: #e53e3e;
+}
+
+.strength-medium {
+  width: 66%;
+  background-color: #f6ad55;
+}
+
+.strength-strong {
+  width: 100%;
+  background-color: #48bb78;
+}
+
+.passwordStrengthText {
+  font-size: 0.8rem;
+  margin-top: 5px;
+  color: #6c757d;
+}
+
+/* Class code info */
+.classCodeInfo {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+.signupContainer {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80vh;
-  padding: 20px;
-  background-color: #f4f4f9;
-}
-
-.aboutCard {
-  width: 600px;
-  padding: 30px;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-.aboutCard h2 {
-  font-size: 2rem;
-  color: #4a90e2;
-  margin-bottom: 20px;
-}
-
-.aboutCard p {
-  font-size: 1rem;
-  color: #555;
-  line-height: 1.6;
-}
-.error {
-  color: red;
-  font-size: 1rem;
-  margin-top: 10px;
-}
-.green {
-  position: absolute;
-  background-color: rgb(20, 204, 20);
-  color: white;
+  flex: 1;
   padding: 10px;
-  border-radius: 5px;
-  margin-top: 10px;
-  text-align: center;
-  top: 20px;
-  z-index: 2005;
-  left: 50%;
-  transform: translateX(-50%);
+  margin: 5px 0;
+  height: calc(100vh - 150px);
 }
+
+.signupCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: 450px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin: 5px 0;
+}
+
+.signupCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+.signupCard h2 {
+  margin-bottom: 5px;
+  font-size: 1.6rem;
+  color: #4361ee;
+  font-weight: 700;
+}
+
+.signupSubtitle {
+  color: #6c757d;
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.signupForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.formGroup label {
+  font-weight: 500;
+  color: #495057;
+  font-size: 0.85rem;
+}
+
+.signupForm input {
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.passwordStrength {
+  height: 2px;
+  margin-top: 2px;
+}
+
+.passwordStrengthText {
+  font-size: 0.7rem;
+  margin-top: 2px;
+}
+
+.classCodeInfo {
+  font-size: 0.75rem;
+  margin-top: 2px;
+}
+
+hr {
+  width: 100%;
+  margin: 15px 0;
+  border: 0;
+  border-top: 1px solid #e9ecef;
+}
+
+.signupPrompt {
+  margin-top: 5px;
+}
+
+.signupPrompt p {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.loginButton {
+  padding: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: white;
+  background-color: #4361ee;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 5px;
+  width: 100%;
+}
+
+.errorMessage {
+  background-color: #fff5f5;
+  color: #e53e3e;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 0.85rem;
+  border-left: 4px solid #e53e3e;
+}
+
+.footerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 10%;
+  background-color: #4361ee;
+  color: white;
+  font-size: 0.9rem;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+} 

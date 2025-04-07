@@ -432,7 +432,6 @@ router.post('/api/submitHomework', upload.single('homework'), (req, res) => {
   const studentName = decoded.name;
   const collection = db.collection('assignments');
 
-  // First find the assignment and check if student already has a submission
   collection
     .findOne({ _id: new ObjectId(assignmentId) })
     .then((assignment) => {
@@ -440,13 +439,11 @@ router.post('/api/submitHomework', upload.single('homework'), (req, res) => {
         return res.status(404).json({ message: 'Assignment not found' });
       }
 
-      // Find existing submission by this student
       const existingSubmission = assignment.submissions.find(
         (sub) => sub.studentId === studentId
       );
 
       if (existingSubmission) {
-        // Update existing submission
         return collection.updateOne(
           {
             _id: new ObjectId(assignmentId),
@@ -458,13 +455,12 @@ router.post('/api/submitHomework', upload.single('homework'), (req, res) => {
               'submissions.$.submissionDate': new Date()
                 .toISOString()
                 .split('T')[0],
-              'submissions.$.grade': null, // Reset grade when resubmitting
-              'submissions.$.feedback': null, // Reset feedback when resubmitting
+              'submissions.$.grade': null,
+              'submissions.$.feedback': null,
             },
           }
         );
       } else {
-        // Create new submission
         return collection.updateOne(
           { _id: new ObjectId(assignmentId) },
           {
