@@ -9,6 +9,7 @@ import CreateClass from './pages/createClass/createClass';
 import StudentHome from './pages/studentHome/studentHome';
 import About from './pages/about/about';
 import Contact from './pages/contact/contact';
+import ForgotPassword from './pages/forgotPassword/forgotPassword';
 import './App.css';
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
           <Route path='/createClass' element={<CreateClass />} />
           <Route path='/contact' element={<Contact />} />
           <Route path='/student/home' element={<StudentHome />} />
+          <Route path='/forgot-password' element={<ForgotPassword />} />
         </Routes>
       </Router>
     </Fragment>

@@ -72,7 +72,9 @@ body {
   background-color: white;
   border-radius: 12px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .loginCard:hover {
@@ -236,15 +238,15 @@ hr {
     width: 90%;
     padding: 30px 20px;
   }
-  
+
   .navBar {
     padding: 12px 20px;
   }
-  
+
   .navBarTitle h2 {
     font-size: 1.3rem;
   }
-  
+
   .loginCard h2 {
     font-size: 1.8rem;
   }
@@ -313,4 +315,9 @@ hr {
   z-index: 2005;
   left: 50%;
   transform: translateX(-50%);
+}
+.errorMsg {
+  color: red;
+  font-size: 1.4rem;
+  margin: 10px;
 }

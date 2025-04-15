@@ -2,6 +2,7 @@ import { Fragment, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/navbar';
 import Footer from '../../components/footer';
+import dotenv from 'dotenv';
 import M from 'materialize-css';
 
 const TeacherSignup = () => {
@@ -17,7 +18,7 @@ const TeacherSignup = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [code, setCode] = useState('');
-  const secretCode = '123456';
+  const secretCode = import.meta.env.VITE_TEACHER_SECRET_CODE;
 
   const handleSubmit = (e) => {
     e.preventDefault();

@@ -31,8 +31,14 @@ const StudentSignup = () => {
       const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
       const isLongEnough = password.length >= 8;
 
-      const strength = [hasUpperCase, hasLowerCase, hasNumbers, hasSpecialChar, isLongEnough].filter(Boolean).length;
-      
+      const strength = [
+        hasUpperCase,
+        hasLowerCase,
+        hasNumbers,
+        hasSpecialChar,
+        isLongEnough,
+      ].filter(Boolean).length;
+
       if (strength <= 2) {
         setPasswordStrength('weak');
         setPasswordStrengthText('Weak password');
@@ -52,30 +58,30 @@ const StudentSignup = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setErrorMessage('');
-    
+
     // Validate form
     if (!name || !email || !password || !confirmPassword || !classCode) {
       setErrorMessage('Please fill all the fields');
       return;
     }
-    
+
     if (password !== confirmPassword) {
       setErrorMessage('Passwords do not match');
       return;
     }
-    
+
     if (password.length < 8) {
       setErrorMessage('Password must be at least 8 characters long');
       return;
     }
-    
+
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setErrorMessage('Please enter a valid email address');
       return;
     }
-    
+
     setIsLoading(true);
-    
+
     fetch('http://localhost:3000/api/studentSignup', {
       method: 'POST',
       headers: {
@@ -114,15 +120,15 @@ const StudentSignup = () => {
         <div className='signupContainer'>
           <div className='signupCard'>
             <h2>Create Student Account</h2>
-            <p className="signupSubtitle">Join our learning community today</p>
-            
+            <p className='signupSubtitle'>Join our learning community today</p>
+
             {errorMessage && <div className='errorMessage'>{errorMessage}</div>}
-            
+
             <form className='signupForm' onSubmit={(e) => handleSubmit(e)}>
-              <div className="formGroup">
-                <label htmlFor="name">Full Name</label>
+              <div className='formGroup'>
+                <label htmlFor='name'>Full Name</label>
                 <input
-                  id="name"
+                  id='name'
                   type='text'
                   placeholder='Enter your full name'
                   value={name}
@@ -130,11 +136,11 @@ const StudentSignup = () => {
                   required
                 />
               </div>
-              
-              <div className="formGroup">
-                <label htmlFor="email">Email Address</label>
+
+              <div className='formGroup'>
+                <label htmlFor='email'>Email Address</label>
                 <input
-                  id="email"
+                  id='email'
                   type='email'
                   placeholder='Enter your email'
                   value={email}
@@ -142,11 +148,11 @@ const StudentSignup = () => {
                   required
                 />
               </div>
-              
-              <div className="formGroup">
-                <label htmlFor="password">Password</label>
+
+              <div className='formGroup'>
+                <label htmlFor='password'>Password</label>
                 <input
-                  id="password"
+                  id='password'
                   type='password'
                   placeholder='Create a password'
                   value={password}
@@ -155,18 +161,22 @@ const StudentSignup = () => {
                 />
                 {password && (
                   <>
-                    <div className="passwordStrength">
-                      <div className={`passwordStrengthBar strength-${passwordStrength}`}></div>
+                    <div className='passwordStrength'>
+                      <div
+                        className={`passwordStrengthBar strength-${passwordStrength}`}
+                      ></div>
                     </div>
-                    <div className="passwordStrengthText">{passwordStrengthText}</div>
+                    <div className='passwordStrengthText'>
+                      {passwordStrengthText}
+                    </div>
                   </>
                 )}
               </div>
-              
-              <div className="formGroup">
-                <label htmlFor="confirmPassword">Confirm Password</label>
+
+              <div className='formGroup'>
+                <label htmlFor='confirmPassword'>Confirm Password</label>
                 <input
-                  id="confirmPassword"
+                  id='confirmPassword'
                   type='password'
                   placeholder='Confirm your password'
                   value={confirmPassword}
@@ -174,33 +184,40 @@ const StudentSignup = () => {
                   required
                 />
               </div>
-              
-              <div className="formGroup">
-                <label htmlFor="classCode">Class Code</label>
+
+              <div className='formGroup'>
+                <label htmlFor='classCode'>Class Code</label>
                 <input
-                  id="classCode"
+                  id='classCode'
                   type='text'
                   placeholder='Enter your class code'
                   value={classCode}
                   onChange={(e) => setClassCode(e.target.value)}
                   required
                 />
-                <div className="classCodeInfo">Ask your teacher for the class code if you don't have it</div>
+                <div className='classCodeInfo'>
+                  Ask your teacher for the class code if you don't have it
+                </div>
               </div>
-              
-              <button 
-                className={`loginButton ${isLoading ? 'loading' : ''}`} 
+
+              <button
+                className={`loginButton ${isLoading ? 'loading' : ''}`}
                 type='submit'
                 disabled={isLoading}
               >
                 {isLoading ? 'Creating Account...' : 'Create Account'}
               </button>
             </form>
-            
+
             <hr />
-            
-            <div className="signupPrompt">
-              <p>Already have an account? <Link to="/" className="loginLink">Login</Link></p>
+
+            <div className='signupPrompt'>
+              <p>
+                Already have an account?{' '}
+                <Link to='/' className='loginLink'>
+                  Login
+                </Link>
+              </p>
             </div>
           </div>
         </div>

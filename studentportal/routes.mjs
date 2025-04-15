@@ -21,11 +21,6 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-//Routes
-router.get('/', (req, res) => {
-  res.send('Hello World');
-});
-
 //middleware to check token
 function checkToken(req, res, next) {
   const token = req.get('token');
@@ -519,6 +514,48 @@ router.post('/api/gradeSubmission', checkToken, (req, res) => {
     .catch((error) => {
       console.error(error);
       res.status(500).json({ message: 'Error grading submission', error });
+    });
+});
+
+//login with mail
+router.post('/api/oneTimeCode/login', (req, res) => {
+  const collection = db.collection('students');
+  const email = req.body.email.toLowerCase();
+  collection
+    .findOne({ email: email })
+    .then((result) => {
+      if (!result) {
+        return res.status(404).json({ message: 'User does not exist' });
+      }
+
+      const token = jwt.sign(
+        {
+          userId: result._id,
+          role: 'student',
+          name: result.name,
+          email: result.email,
+          classes: result.classes,
+          iss: 'http://localhost:3000',
+        },
+        JWT_SECRET,
+        { expiresIn: '1h' }
+      );
+
+      const response = {
+        status: 200,
+        message: 'Login successful',
+        studentId: result._id,
+        token: token,
+        name: result.name,
+        email: result.email,
+        classes: result.classes,
+        role: result.role,
+      };
+      return res.json(response);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ message: 'Internal server error' });
     });
 });
 

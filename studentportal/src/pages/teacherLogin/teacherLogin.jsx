@@ -38,26 +38,24 @@ const TeacherLogin = () => {
           sessionStorage.setItem('token', data.token);
           M.toast({ html: 'Login Succesfull', classes: 'green' });
           navigate('/teacher/home');
+          fetch('http://localhost:3000/api/getClassCode', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              token: data.token,
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.classCode) {
+                sessionStorage.setItem('classCode', data.classCode);
+              }
+            });
         }
       })
       .catch((err) => {
         console.log(err);
         setErrorMessage('Internal server error');
-      });
-
-    //get classCode
-    fetch('http://localhost:3000/api/getClassCode', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        token: sessionStorage.getItem('token'),
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.classCode) {
-          sessionStorage.setItem('classCode', data.classCode);
-        }
       });
   };
   return (
